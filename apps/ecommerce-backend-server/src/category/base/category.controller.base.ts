@@ -40,6 +40,7 @@ export class CategoryControllerBase {
         id: true,
         imageUrl: true,
         name: true,
+        parentCategory: true,
         parentCategoryId: true,
         slug: true,
         updatedAt: true,
@@ -59,6 +60,7 @@ export class CategoryControllerBase {
         id: true,
         imageUrl: true,
         name: true,
+        parentCategory: true,
         parentCategoryId: true,
         slug: true,
         updatedAt: true,
@@ -79,6 +81,7 @@ export class CategoryControllerBase {
         id: true,
         imageUrl: true,
         name: true,
+        parentCategory: true,
         parentCategoryId: true,
         slug: true,
         updatedAt: true,
@@ -108,6 +111,7 @@ export class CategoryControllerBase {
           id: true,
           imageUrl: true,
           name: true,
+          parentCategory: true,
           parentCategoryId: true,
           slug: true,
           updatedAt: true,
@@ -137,6 +141,7 @@ export class CategoryControllerBase {
           id: true,
           imageUrl: true,
           name: true,
+          parentCategory: true,
           parentCategoryId: true,
           slug: true,
           updatedAt: true,
@@ -168,6 +173,12 @@ export class CategoryControllerBase {
           },
         },
 
+        cartItem: {
+          select: {
+            id: true,
+          },
+        },
+
         category: {
           select: {
             id: true,
@@ -180,6 +191,13 @@ export class CategoryControllerBase {
         id: true,
         images: true,
         inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
         price: true,
         sizes: true,
         title: true,

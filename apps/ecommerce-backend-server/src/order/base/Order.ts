@@ -11,8 +11,12 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import { IsDate, IsString, ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { OrderItem } from "../../orderItem/base/OrderItem";
+import { Payment } from "../../payment/base/Payment";
+import { ReturnRequest } from "../../returnRequest/base/ReturnRequest";
+import { User } from "../../user/base/User";
 
 @ObjectType()
 class Order {
@@ -33,12 +37,66 @@ class Order {
   id!: string;
 
   @ApiProperty({
+    required: false,
+    type: () => OrderItem,
+  })
+  @ValidateNested()
+  @Type(() => OrderItem)
+  @IsOptional()
+  orderItem?: OrderItem | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => Payment,
+  })
+  @ValidateNested()
+  @Type(() => Payment)
+  @IsOptional()
+  payment?: Payment | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Payment],
+  })
+  @ValidateNested()
+  @Type(() => Payment)
+  @IsOptional()
+  payments?: Array<Payment>;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequest,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequest)
+  @IsOptional()
+  returnRequest?: ReturnRequest | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [ReturnRequest],
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequest)
+  @IsOptional()
+  returnRequests?: Array<ReturnRequest>;
+
+  @ApiProperty({
     required: true,
   })
   @IsDate()
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => [User],
+  })
+  @ValidateNested()
+  @Type(() => User)
+  @IsOptional()
+  users?: Array<User>;
 }
 
 export { Order as Order };

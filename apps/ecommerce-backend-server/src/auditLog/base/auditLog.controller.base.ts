@@ -31,7 +31,15 @@ export class AuditLogControllerBase {
     @common.Body() data: AuditLogCreateInput
   ): Promise<AuditLog> {
     return await this.service.createAuditLog({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
         action: true,
         createdAt: true,
@@ -39,6 +47,12 @@ export class AuditLogControllerBase {
         entityId: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -57,6 +71,12 @@ export class AuditLogControllerBase {
         entityId: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -76,6 +96,12 @@ export class AuditLogControllerBase {
         entityId: true,
         id: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -96,7 +122,15 @@ export class AuditLogControllerBase {
     try {
       return await this.service.updateAuditLog({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
           action: true,
           createdAt: true,
@@ -104,6 +138,12 @@ export class AuditLogControllerBase {
           entityId: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -132,6 +172,12 @@ export class AuditLogControllerBase {
           entityId: true,
           id: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

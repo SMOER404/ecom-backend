@@ -14,12 +14,15 @@ import { ApiProperty } from "@nestjs/swagger";
 import {
   IsDate,
   IsString,
-  MaxLength,
+  ValidateNested,
   IsOptional,
+  MaxLength,
   IsEnum,
 } from "class-validator";
 import { Type } from "class-transformer";
+import { Order } from "../../order/base/Order";
 import { EnumReturnRequestStatus } from "./EnumReturnRequestStatus";
+import { User } from "../../user/base/User";
 
 @ObjectType()
 class ReturnRequest {
@@ -38,6 +41,24 @@ class ReturnRequest {
   @IsString()
   @Field(() => String)
   id!: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => Order,
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  order?: Order | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Order],
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  orders?: Array<Order>;
 
   @ApiProperty({
     required: false,
@@ -69,6 +90,15 @@ class ReturnRequest {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => User,
+  })
+  @ValidateNested()
+  @Type(() => User)
+  @IsOptional()
+  user?: User | null;
 }
 
 export { ReturnRequest as ReturnRequest };

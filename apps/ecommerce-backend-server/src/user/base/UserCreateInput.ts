@@ -11,7 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
+import { AuditLogCreateNestedManyWithoutUsersInput } from "./AuditLogCreateNestedManyWithoutUsersInput";
 import {
   ValidateNested,
   IsOptional,
@@ -20,15 +20,32 @@ import {
   IsEnum,
 } from "class-validator";
 import { Type } from "class-transformer";
+import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
+import { NotificationCreateNestedManyWithoutUsersInput } from "./NotificationCreateNestedManyWithoutUsersInput";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { ReturnRequestCreateNestedManyWithoutUsersInput } from "./ReturnRequestCreateNestedManyWithoutUsersInput";
 import { ReviewCreateNestedManyWithoutUsersInput } from "./ReviewCreateNestedManyWithoutUsersInput";
 import { EnumUserRole } from "./EnumUserRole";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { SupportTicketCreateNestedManyWithoutUsersInput } from "./SupportTicketCreateNestedManyWithoutUsersInput";
 import { WishlistWhereUniqueInput } from "../../wishlist/base/WishlistWhereUniqueInput";
 
 @InputType()
 class UserCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => AuditLogCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => AuditLogCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => AuditLogCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  auditLogs?: AuditLogCreateNestedManyWithoutUsersInput;
+
   @ApiProperty({
     required: false,
     type: () => CartWhereUniqueInput,
@@ -101,12 +118,48 @@ class UserCreateInput {
   name?: string | null;
 
   @ApiProperty({
+    required: false,
+    type: () => NotificationCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => NotificationCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => NotificationCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  notifications?: NotificationCreateNestedManyWithoutUsersInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
     required: true,
     type: String,
   })
   @IsString()
   @Field(() => String)
   password!: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => ReturnRequestCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  returnRequests?: ReturnRequestCreateNestedManyWithoutUsersInput;
 
   @ApiProperty({
     required: false,
@@ -137,6 +190,18 @@ class UserCreateInput {
   @IsJSONValue()
   @Field(() => GraphQLJSON)
   roles!: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => SupportTicketCreateNestedManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => SupportTicketCreateNestedManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => SupportTicketCreateNestedManyWithoutUsersInput, {
+    nullable: true,
+  })
+  supportTickets?: SupportTicketCreateNestedManyWithoutUsersInput;
 
   @ApiProperty({
     required: true,

@@ -22,6 +22,9 @@ import { CartItem } from "./CartItem";
 import { CartItemFindManyArgs } from "./CartItemFindManyArgs";
 import { CartItemWhereUniqueInput } from "./CartItemWhereUniqueInput";
 import { CartItemUpdateInput } from "./CartItemUpdateInput";
+import { ProductFindManyArgs } from "../../product/base/ProductFindManyArgs";
+import { Product } from "../../product/base/Product";
+import { ProductWhereUniqueInput } from "../../product/base/ProductWhereUniqueInput";
 
 export class CartItemControllerBase {
   constructor(protected readonly service: CartItemService) {}
@@ -31,8 +34,22 @@ export class CartItemControllerBase {
     @common.Body() data: CartItemCreateInput
   ): Promise<CartItem> {
     return await this.service.createCartItem({
-      data: data,
+      data: {
+        ...data,
+
+        cart: data.cart
+          ? {
+              connect: data.cart,
+            }
+          : undefined,
+      },
       select: {
+        cart: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
@@ -48,6 +65,12 @@ export class CartItemControllerBase {
     return this.service.cartItems({
       ...args,
       select: {
+        cart: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
@@ -64,6 +87,12 @@ export class CartItemControllerBase {
     const result = await this.service.cartItem({
       where: params,
       select: {
+        cart: {
+          select: {
+            id: true,
+          },
+        },
+
         createdAt: true,
         id: true,
         updatedAt: true,
@@ -87,8 +116,22 @@ export class CartItemControllerBase {
     try {
       return await this.service.updateCartItem({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          cart: data.cart
+            ? {
+                connect: data.cart,
+              }
+            : undefined,
+        },
         select: {
+          cart: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
           updatedAt: true,
@@ -114,6 +157,12 @@ export class CartItemControllerBase {
       return await this.service.deleteCartItem({
         where: params,
         select: {
+          cart: {
+            select: {
+              id: true,
+            },
+          },
+
           createdAt: true,
           id: true,
           updatedAt: true,
@@ -127,5 +176,111 @@ export class CartItemControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/products")
+  @ApiNestedQuery(ProductFindManyArgs)
+  async findProducts(
+    @common.Req() request: Request,
+    @common.Param() params: CartItemWhereUniqueInput
+  ): Promise<Product[]> {
+    const query = plainToClass(ProductFindManyArgs, request.query);
+    const results = await this.service.findProducts(params.id, {
+      ...query,
+      select: {
+        brand: {
+          select: {
+            id: true,
+          },
+        },
+
+        cartItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        category: {
+          select: {
+            id: true,
+          },
+        },
+
+        colors: true,
+        createdAt: true,
+        description: true,
+        id: true,
+        images: true,
+        inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        price: true,
+        sizes: true,
+        title: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/products")
+  async connectProducts(
+    @common.Param() params: CartItemWhereUniqueInput,
+    @common.Body() body: ProductWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      products: {
+        connect: body,
+      },
+    };
+    await this.service.updateCartItem({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/products")
+  async updateProducts(
+    @common.Param() params: CartItemWhereUniqueInput,
+    @common.Body() body: ProductWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      products: {
+        set: body,
+      },
+    };
+    await this.service.updateCartItem({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/products")
+  async disconnectProducts(
+    @common.Param() params: CartItemWhereUniqueInput,
+    @common.Body() body: ProductWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      products: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateCartItem({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

@@ -7,6 +7,14 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Cart {
+  cartItems CartItem[]
+  createdAt DateTime   @default(now())
+  id        String     @id @default(cuid())
+  updatedAt DateTime   @updatedAt
+  users     User[]
+}
+
 model Review {
   createdAt DateTime @default(now())
   id        String   @id @default(cuid())
@@ -20,22 +28,25 @@ model Review {
 }
 
 model CartItem {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  updatedAt DateTime @updatedAt
+  cart      Cart?     @relation(fields: [cartId], references: [id])
+  cartId    String?
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  products  Product[]
+  updatedAt DateTime  @updatedAt
 }
 
-model Cart {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  updatedAt DateTime @updatedAt
-  users     User[]
-}
-
-model OrderItem {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  updatedAt DateTime @updatedAt
+model ReturnRequest {
+  createdAt DateTime                 @default(now())
+  id        String                   @id @default(cuid())
+  order     Order?                   @relation(name: "OrderOnReturnRequests", fields: [orderId], references: [id])
+  orderId   String?
+  orders    Order[]                  @relation(name: "OrdersOnReturnRequest")
+  reason    String?
+  status    EnumReturnRequestStatus?
+  updatedAt DateTime                 @updatedAt
+  user      User?                    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Payment {
@@ -43,18 +54,23 @@ model Payment {
   createdAt     DateTime           @default(now())
   id            String             @id @default(cuid())
   method        String?
+  order         Order?             @relation(name: "OrderOnPayments", fields: [orderId], references: [id])
+  orderId       String?
+  orders        Order[]            @relation(name: "OrdersOnPayment")
   status        EnumPaymentStatus?
   transactionId String?
   updatedAt     DateTime           @updatedAt
 }
 
-model AuditLog {
-  action    String?
-  createdAt DateTime @default(now())
-  entity    String?
-  entityId  String?
-  id        String   @id @default(cuid())
-  updatedAt DateTime @updatedAt
+model SupportTicket {
+  createdAt DateTime                 @default(now())
+  id        String                   @id @default(cuid())
+  messages  String?
+  status    EnumSupportTicketStatus?
+  topic     String?
+  updatedAt DateTime                 @updatedAt
+  user      User?                    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model ShippingMethod {
@@ -74,15 +90,8 @@ model Notification {
   isRead    Boolean?
   title     String?
   updatedAt DateTime @updatedAt
-}
-
-model SupportTicket {
-  createdAt DateTime                 @default(now())
-  id        String                   @id @default(cuid())
-  messages  String?
-  status    EnumSupportTicketStatus?
-  topic     String?
-  updatedAt DateTime                 @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model Webhook {
@@ -106,25 +115,47 @@ model Coupon {
   value          Float?
 }
 
-model ReturnRequest {
-  createdAt DateTime                 @default(now())
-  id        String                   @id @default(cuid())
-  reason    String?
-  status    EnumReturnRequestStatus?
-  updatedAt DateTime                 @updatedAt
-}
-
 model Wishlist {
   createdAt DateTime @default(now())
   id        String   @id @default(cuid())
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
   updatedAt DateTime @updatedAt
   users     User[]
 }
 
+model OrderItem {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  orders    Order[]
+  products  Product[]
+  updatedAt DateTime  @updatedAt
+}
+
 model Order {
+  createdAt       DateTime        @default(now())
+  id              String          @id @default(cuid())
+  orderItem       OrderItem?      @relation(fields: [orderItemId], references: [id])
+  orderItemId     String?
+  payment         Payment?        @relation(name: "OrdersOnPayment", fields: [paymentId], references: [id])
+  paymentId       String?
+  payments        Payment[]       @relation(name: "OrderOnPayments")
+  returnRequest   ReturnRequest?  @relation(name: "OrdersOnReturnRequest", fields: [returnRequestId], references: [id])
+  returnRequestId String?
+  returnRequests  ReturnRequest[] @relation(name: "OrderOnReturnRequests")
+  updatedAt       DateTime        @updatedAt
+  users           User[]
+}
+
+model AuditLog {
+  action    String?
   createdAt DateTime @default(now())
+  entity    String?
+  entityId  String?
   id        String   @id @default(cuid())
   updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
 }
 
 model FileUpload {
@@ -147,20 +178,11 @@ model Brand {
   updatedAt DateTime  @updatedAt
 }
 
-model Category {
-  createdAt        DateTime  @default(now())
-  id               String    @id @default(cuid())
-  imageUrl         String?
-  name             String?
-  parentCategoryId String?
-  products         Product[]
-  slug             String?
-  updatedAt        DateTime  @updatedAt
-}
-
 model Product {
   brand       Brand?              @relation(fields: [brandId], references: [id])
   brandId     String?
+  cartItem    CartItem?           @relation(fields: [cartItemId], references: [id])
+  cartItemId  String?
   category    Category?           @relation(fields: [categoryId], references: [id])
   categoryId  String?
   colors      EnumProductColors[]
@@ -169,31 +191,56 @@ model Product {
   id          String              @id @default(cuid())
   images      EnumProductImages[]
   inStock     Boolean?
+  orderItem   OrderItem?          @relation(fields: [orderItemId], references: [id])
+  orderItemId String?
   price       Float?
   reviews     Review[]
   sizes       EnumProductSizes[]
   title       String?
   updatedAt   DateTime            @updatedAt
+  wishlists   Wishlist[]
+}
+
+model Category {
+  createdAt        DateTime  @default(now())
+  id               String    @id @default(cuid())
+  imageUrl         String?
+  name             String?
+  parentCategory   String?
+  parentCategoryId String?
+  products         Product[]
+  slug             String?
+  updatedAt        DateTime  @updatedAt
 }
 
 model User {
-  cart       Cart?         @relation(fields: [cartId], references: [id])
-  cartId     String?
-  createdAt  DateTime      @default(now())
-  email      String?       @unique
-  firstName  String?
-  googleId   String?
-  id         String        @id @default(cuid())
-  lastName   String?
-  name       String?
-  password   String
-  reviews    Review[]
-  role       EnumUserRole?
-  roles      Json
-  updatedAt  DateTime      @updatedAt
-  username   String        @unique
-  wishlist   Wishlist?     @relation(fields: [wishlistId], references: [id])
-  wishlistId String?
+  auditLogs      AuditLog[]
+  cart           Cart?           @relation(fields: [cartId], references: [id])
+  cartId         String?
+  createdAt      DateTime        @default(now())
+  email          String?         @unique
+  firstName      String?
+  googleId       String?
+  id             String          @id @default(cuid())
+  lastName       String?
+  name           String?
+  notifications  Notification[]
+  order          Order?          @relation(fields: [orderId], references: [id])
+  orderId        String?
+  password       String
+  returnRequests ReturnRequest[]
+  reviews        Review[]
+  role           EnumUserRole?
+  roles          Json
+  supportTickets SupportTicket[]
+  updatedAt      DateTime        @updatedAt
+  username       String          @unique
+  wishlist       Wishlist?       @relation(fields: [wishlistId], references: [id])
+  wishlistId     String?
+}
+
+enum EnumReturnRequestStatus {
+  Option1
 }
 
 enum EnumPaymentStatus {
@@ -205,10 +252,6 @@ enum EnumSupportTicketStatus {
 }
 
 enum EnumCouponDiscountType {
-  Option1
-}
-
-enum EnumReturnRequestStatus {
   Option1
 }
 

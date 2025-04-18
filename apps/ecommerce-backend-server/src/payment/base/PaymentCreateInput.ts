@@ -11,6 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+
 import {
   IsNumber,
   Min,
@@ -18,8 +19,13 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
   IsEnum,
 } from "class-validator";
+
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { Type } from "class-transformer";
+import { OrderCreateNestedManyWithoutPaymentsInput } from "./OrderCreateNestedManyWithoutPaymentsInput";
 import { EnumPaymentStatus } from "./EnumPaymentStatus";
 
 @InputType()
@@ -48,6 +54,30 @@ class PaymentCreateInput {
     nullable: true,
   })
   method?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderCreateNestedManyWithoutPaymentsInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderCreateNestedManyWithoutPaymentsInput)
+  @IsOptional()
+  @Field(() => OrderCreateNestedManyWithoutPaymentsInput, {
+    nullable: true,
+  })
+  orders?: OrderCreateNestedManyWithoutPaymentsInput;
 
   @ApiProperty({
     required: false,

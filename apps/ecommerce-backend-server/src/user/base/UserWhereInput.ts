@@ -11,17 +11,34 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
+import { AuditLogListRelationFilter } from "../../auditLog/base/AuditLogListRelationFilter";
 import { ValidateNested, IsOptional, IsEnum } from "class-validator";
 import { Type } from "class-transformer";
+import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { StringFilter } from "../../util/StringFilter";
+import { NotificationListRelationFilter } from "../../notification/base/NotificationListRelationFilter";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { ReturnRequestListRelationFilter } from "../../returnRequest/base/ReturnRequestListRelationFilter";
 import { ReviewListRelationFilter } from "../../review/base/ReviewListRelationFilter";
 import { EnumUserRole } from "./EnumUserRole";
+import { SupportTicketListRelationFilter } from "../../supportTicket/base/SupportTicketListRelationFilter";
 import { WishlistWhereUniqueInput } from "../../wishlist/base/WishlistWhereUniqueInput";
 
 @InputType()
 class UserWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => AuditLogListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => AuditLogListRelationFilter)
+  @IsOptional()
+  @Field(() => AuditLogListRelationFilter, {
+    nullable: true,
+  })
+  auditLogs?: AuditLogListRelationFilter;
+
   @ApiProperty({
     required: false,
     type: () => CartWhereUniqueInput,
@@ -102,6 +119,42 @@ class UserWhereInput {
 
   @ApiProperty({
     required: false,
+    type: () => NotificationListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => NotificationListRelationFilter)
+  @IsOptional()
+  @Field(() => NotificationListRelationFilter, {
+    nullable: true,
+  })
+  notifications?: NotificationListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestListRelationFilter)
+  @IsOptional()
+  @Field(() => ReturnRequestListRelationFilter, {
+    nullable: true,
+  })
+  returnRequests?: ReturnRequestListRelationFilter;
+
+  @ApiProperty({
+    required: false,
     type: () => ReviewListRelationFilter,
   })
   @ValidateNested()
@@ -122,6 +175,18 @@ class UserWhereInput {
     nullable: true,
   })
   role?: "Option1";
+
+  @ApiProperty({
+    required: false,
+    type: () => SupportTicketListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => SupportTicketListRelationFilter)
+  @IsOptional()
+  @Field(() => SupportTicketListRelationFilter, {
+    nullable: true,
+  })
+  supportTickets?: SupportTicketListRelationFilter;
 
   @ApiProperty({
     required: false,

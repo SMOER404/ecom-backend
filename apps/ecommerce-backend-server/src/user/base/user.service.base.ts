@@ -14,8 +14,13 @@ import { PrismaService } from "../../prisma/prisma.service";
 import {
   Prisma,
   User as PrismaUser,
+  AuditLog as PrismaAuditLog,
+  Notification as PrismaNotification,
+  ReturnRequest as PrismaReturnRequest,
   Review as PrismaReview,
+  SupportTicket as PrismaSupportTicket,
   Cart as PrismaCart,
+  Order as PrismaOrder,
   Wishlist as PrismaWishlist,
 } from "@prisma/client";
 
@@ -42,6 +47,39 @@ export class UserServiceBase {
     return this.prisma.user.delete(args);
   }
 
+  async findAuditLogs(
+    parentId: string,
+    args: Prisma.AuditLogFindManyArgs
+  ): Promise<PrismaAuditLog[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .auditLogs(args);
+  }
+
+  async findNotifications(
+    parentId: string,
+    args: Prisma.NotificationFindManyArgs
+  ): Promise<PrismaNotification[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .notifications(args);
+  }
+
+  async findReturnRequests(
+    parentId: string,
+    args: Prisma.ReturnRequestFindManyArgs
+  ): Promise<PrismaReturnRequest[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .returnRequests(args);
+  }
+
   async findReviews(
     parentId: string,
     args: Prisma.ReviewFindManyArgs
@@ -53,12 +91,31 @@ export class UserServiceBase {
       .reviews(args);
   }
 
+  async findSupportTickets(
+    parentId: string,
+    args: Prisma.SupportTicketFindManyArgs
+  ): Promise<PrismaSupportTicket[]> {
+    return this.prisma.user
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .supportTickets(args);
+  }
+
   async getCart(parentId: string): Promise<PrismaCart | null> {
     return this.prisma.user
       .findUnique({
         where: { id: parentId },
       })
       .cart();
+  }
+
+  async getOrder(parentId: string): Promise<PrismaOrder | null> {
+    return this.prisma.user
+      .findUnique({
+        where: { id: parentId },
+      })
+      .order();
   }
 
   async getWishlist(parentId: string): Promise<PrismaWishlist | null> {

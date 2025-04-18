@@ -22,6 +22,9 @@ import { Cart } from "./Cart";
 import { CartFindManyArgs } from "./CartFindManyArgs";
 import { CartWhereUniqueInput } from "./CartWhereUniqueInput";
 import { CartUpdateInput } from "./CartUpdateInput";
+import { CartItemFindManyArgs } from "../../cartItem/base/CartItemFindManyArgs";
+import { CartItem } from "../../cartItem/base/CartItem";
+import { CartItemWhereUniqueInput } from "../../cartItem/base/CartItemWhereUniqueInput";
 import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
 import { User } from "../../user/base/User";
 import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
@@ -130,6 +133,86 @@ export class CartControllerBase {
     }
   }
 
+  @common.Get("/:id/cartItems")
+  @ApiNestedQuery(CartItemFindManyArgs)
+  async findCartItems(
+    @common.Req() request: Request,
+    @common.Param() params: CartWhereUniqueInput
+  ): Promise<CartItem[]> {
+    const query = plainToClass(CartItemFindManyArgs, request.query);
+    const results = await this.service.findCartItems(params.id, {
+      ...query,
+      select: {
+        cart: {
+          select: {
+            id: true,
+          },
+        },
+
+        createdAt: true,
+        id: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/cartItems")
+  async connectCartItems(
+    @common.Param() params: CartWhereUniqueInput,
+    @common.Body() body: CartItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      cartItems: {
+        connect: body,
+      },
+    };
+    await this.service.updateCart({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/cartItems")
+  async updateCartItems(
+    @common.Param() params: CartWhereUniqueInput,
+    @common.Body() body: CartItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      cartItems: {
+        set: body,
+      },
+    };
+    await this.service.updateCart({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/cartItems")
+  async disconnectCartItems(
+    @common.Param() params: CartWhereUniqueInput,
+    @common.Body() body: CartItemWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      cartItems: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateCart({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
   @common.Get("/:id/users")
   @ApiNestedQuery(UserFindManyArgs)
   async findUsers(
@@ -153,6 +236,13 @@ export class CartControllerBase {
         id: true,
         lastName: true,
         name: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         role: true,
         roles: true,
         updatedAt: true,

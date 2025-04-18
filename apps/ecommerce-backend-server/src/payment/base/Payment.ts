@@ -11,6 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
+
 import {
   IsNumber,
   Min,
@@ -19,9 +20,12 @@ import {
   IsDate,
   IsString,
   MaxLength,
+  ValidateNested,
   IsEnum,
 } from "class-validator";
+
 import { Type } from "class-transformer";
+import { Order } from "../../order/base/Order";
 import { EnumPaymentStatus } from "./EnumPaymentStatus";
 
 @ObjectType()
@@ -66,6 +70,24 @@ class Payment {
     nullable: true,
   })
   method!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => Order,
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  order?: Order | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Order],
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  orders?: Array<Order>;
 
   @ApiProperty({
     required: false,

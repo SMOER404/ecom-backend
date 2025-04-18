@@ -13,7 +13,13 @@ import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
-import { IsOptional } from "class-validator";
+import { IsOptional, ValidateNested } from "class-validator";
+import { OrderItemWhereUniqueInput } from "../../orderItem/base/OrderItemWhereUniqueInput";
+import { PaymentWhereUniqueInput } from "../../payment/base/PaymentWhereUniqueInput";
+import { PaymentListRelationFilter } from "../../payment/base/PaymentListRelationFilter";
+import { ReturnRequestWhereUniqueInput } from "../../returnRequest/base/ReturnRequestWhereUniqueInput";
+import { ReturnRequestListRelationFilter } from "../../returnRequest/base/ReturnRequestListRelationFilter";
+import { UserListRelationFilter } from "../../user/base/UserListRelationFilter";
 
 @InputType()
 class OrderWhereInput {
@@ -27,6 +33,78 @@ class OrderWhereInput {
     nullable: true,
   })
   id?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderItemWhereUniqueInput, {
+    nullable: true,
+  })
+  orderItem?: OrderItemWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => PaymentWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => PaymentWhereUniqueInput)
+  @IsOptional()
+  @Field(() => PaymentWhereUniqueInput, {
+    nullable: true,
+  })
+  payment?: PaymentWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => PaymentListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => PaymentListRelationFilter)
+  @IsOptional()
+  @Field(() => PaymentListRelationFilter, {
+    nullable: true,
+  })
+  payments?: PaymentListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestWhereUniqueInput)
+  @IsOptional()
+  @Field(() => ReturnRequestWhereUniqueInput, {
+    nullable: true,
+  })
+  returnRequest?: ReturnRequestWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestListRelationFilter)
+  @IsOptional()
+  @Field(() => ReturnRequestListRelationFilter, {
+    nullable: true,
+  })
+  returnRequests?: ReturnRequestListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => UserListRelationFilter)
+  @IsOptional()
+  @Field(() => UserListRelationFilter, {
+    nullable: true,
+  })
+  users?: UserListRelationFilter;
 }
 
 export { OrderWhereInput as OrderWhereInput };

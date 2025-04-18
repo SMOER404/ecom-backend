@@ -10,7 +10,15 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Order as PrismaOrder } from "@prisma/client";
+
+import {
+  Prisma,
+  Order as PrismaOrder,
+  Payment as PrismaPayment,
+  ReturnRequest as PrismaReturnRequest,
+  User as PrismaUser,
+  OrderItem as PrismaOrderItem,
+} from "@prisma/client";
 
 export class OrderServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -33,5 +41,64 @@ export class OrderServiceBase {
   }
   async deleteOrder(args: Prisma.OrderDeleteArgs): Promise<PrismaOrder> {
     return this.prisma.order.delete(args);
+  }
+
+  async findPayments(
+    parentId: string,
+    args: Prisma.PaymentFindManyArgs
+  ): Promise<PrismaPayment[]> {
+    return this.prisma.order
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .payments(args);
+  }
+
+  async findReturnRequests(
+    parentId: string,
+    args: Prisma.ReturnRequestFindManyArgs
+  ): Promise<PrismaReturnRequest[]> {
+    return this.prisma.order
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .returnRequests(args);
+  }
+
+  async findUsers(
+    parentId: string,
+    args: Prisma.UserFindManyArgs
+  ): Promise<PrismaUser[]> {
+    return this.prisma.order
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .users(args);
+  }
+
+  async getOrderItem(parentId: string): Promise<PrismaOrderItem | null> {
+    return this.prisma.order
+      .findUnique({
+        where: { id: parentId },
+      })
+      .orderItem();
+  }
+
+  async getPayment(parentId: string): Promise<PrismaPayment | null> {
+    return this.prisma.order
+      .findUnique({
+        where: { id: parentId },
+      })
+      .payment();
+  }
+
+  async getReturnRequest(
+    parentId: string
+  ): Promise<PrismaReturnRequest | null> {
+    return this.prisma.order
+      .findUnique({
+        where: { id: parentId },
+      })
+      .returnRequest();
   }
 }

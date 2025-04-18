@@ -73,6 +73,18 @@ class Category {
   @Field(() => String, {
     nullable: true,
   })
+  parentCategory!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
   parentCategoryId!: string | null;
 
   @ApiProperty({

@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, SupportTicket as PrismaSupportTicket } from "@prisma/client";
+import {
+  Prisma,
+  SupportTicket as PrismaSupportTicket,
+  User as PrismaUser,
+} from "@prisma/client";
 
 export class SupportTicketServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,5 +49,13 @@ export class SupportTicketServiceBase {
     args: Prisma.SupportTicketDeleteArgs
   ): Promise<PrismaSupportTicket> {
     return this.prisma.supportTicket.delete(args);
+  }
+
+  async getUser(parentId: string): Promise<PrismaUser | null> {
+    return this.prisma.supportTicket
+      .findUnique({
+        where: { id: parentId },
+      })
+      .user();
   }
 }

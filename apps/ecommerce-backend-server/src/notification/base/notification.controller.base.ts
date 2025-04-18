@@ -31,7 +31,15 @@ export class NotificationControllerBase {
     @common.Body() data: NotificationCreateInput
   ): Promise<Notification> {
     return await this.service.createNotification({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
         body: true,
         createdAt: true,
@@ -39,6 +47,12 @@ export class NotificationControllerBase {
         isRead: true,
         title: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -57,6 +71,12 @@ export class NotificationControllerBase {
         isRead: true,
         title: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -76,6 +96,12 @@ export class NotificationControllerBase {
         isRead: true,
         title: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -96,7 +122,15 @@ export class NotificationControllerBase {
     try {
       return await this.service.updateNotification({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
           body: true,
           createdAt: true,
@@ -104,6 +138,12 @@ export class NotificationControllerBase {
           isRead: true,
           title: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -132,6 +172,12 @@ export class NotificationControllerBase {
           isRead: true,
           title: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

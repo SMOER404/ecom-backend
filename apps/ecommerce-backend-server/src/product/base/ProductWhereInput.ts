@@ -14,12 +14,15 @@ import { ApiProperty } from "@nestjs/swagger";
 import { BrandWhereUniqueInput } from "../../brand/base/BrandWhereUniqueInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { CartItemWhereUniqueInput } from "../../cartItem/base/CartItemWhereUniqueInput";
 import { CategoryWhereUniqueInput } from "../../category/base/CategoryWhereUniqueInput";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { StringFilter } from "../../util/StringFilter";
 import { BooleanNullableFilter } from "../../util/BooleanNullableFilter";
+import { OrderItemWhereUniqueInput } from "../../orderItem/base/OrderItemWhereUniqueInput";
 import { FloatNullableFilter } from "../../util/FloatNullableFilter";
 import { ReviewListRelationFilter } from "../../review/base/ReviewListRelationFilter";
+import { WishlistListRelationFilter } from "../../wishlist/base/WishlistListRelationFilter";
 
 @InputType()
 class ProductWhereInput {
@@ -34,6 +37,18 @@ class ProductWhereInput {
     nullable: true,
   })
   brand?: BrandWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => CartItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CartItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CartItemWhereUniqueInput, {
+    nullable: true,
+  })
+  cartItem?: CartItemWhereUniqueInput;
 
   @ApiProperty({
     required: false,
@@ -82,6 +97,18 @@ class ProductWhereInput {
 
   @ApiProperty({
     required: false,
+    type: () => OrderItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderItemWhereUniqueInput, {
+    nullable: true,
+  })
+  orderItem?: OrderItemWhereUniqueInput;
+
+  @ApiProperty({
+    required: false,
     type: FloatNullableFilter,
   })
   @Type(() => FloatNullableFilter)
@@ -113,6 +140,18 @@ class ProductWhereInput {
     nullable: true,
   })
   title?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => WishlistListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => WishlistListRelationFilter)
+  @IsOptional()
+  @Field(() => WishlistListRelationFilter, {
+    nullable: true,
+  })
+  wishlists?: WishlistListRelationFilter;
 }
 
 export { ProductWhereInput as ProductWhereInput };

@@ -11,11 +11,22 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString } from "class-validator";
+import { Cart } from "../../cart/base/Cart";
+import { ValidateNested, IsOptional, IsDate, IsString } from "class-validator";
 import { Type } from "class-transformer";
+import { Product } from "../../product/base/Product";
 
 @ObjectType()
 class CartItem {
+  @ApiProperty({
+    required: false,
+    type: () => Cart,
+  })
+  @ValidateNested()
+  @Type(() => Cart)
+  @IsOptional()
+  cart?: Cart | null;
+
   @ApiProperty({
     required: true,
   })
@@ -31,6 +42,15 @@ class CartItem {
   @IsString()
   @Field(() => String)
   id!: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Product],
+  })
+  @ValidateNested()
+  @Type(() => Product)
+  @IsOptional()
+  products?: Array<Product>;
 
   @ApiProperty({
     required: true,

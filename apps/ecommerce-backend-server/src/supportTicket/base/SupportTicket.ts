@@ -17,9 +17,11 @@ import {
   MaxLength,
   IsOptional,
   IsEnum,
+  ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { EnumSupportTicketStatus } from "./EnumSupportTicketStatus";
+import { User } from "../../user/base/User";
 
 @ObjectType()
 class SupportTicket {
@@ -81,6 +83,15 @@ class SupportTicket {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => User,
+  })
+  @ValidateNested()
+  @Type(() => User)
+  @IsOptional()
+  user?: User | null;
 }
 
 export { SupportTicket as SupportTicket };
