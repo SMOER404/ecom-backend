@@ -9,5 +9,90 @@ https://docs.amplication.com/how-to/custom-code
 
 ------------------------------------------------------------------------------
   */
-class OrderUpdateInput {}
+import { InputType, Field } from "@nestjs/graphql";
+import { ApiProperty } from "@nestjs/swagger";
+import { OrderItemWhereUniqueInput } from "../../orderItem/base/OrderItemWhereUniqueInput";
+import { ValidateNested, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
+import { PaymentWhereUniqueInput } from "../../payment/base/PaymentWhereUniqueInput";
+import { PaymentUpdateManyWithoutOrdersInput } from "./PaymentUpdateManyWithoutOrdersInput";
+import { ReturnRequestWhereUniqueInput } from "../../returnRequest/base/ReturnRequestWhereUniqueInput";
+import { ReturnRequestUpdateManyWithoutOrdersInput } from "./ReturnRequestUpdateManyWithoutOrdersInput";
+import { UserUpdateManyWithoutOrdersInput } from "./UserUpdateManyWithoutOrdersInput";
+
+@InputType()
+class OrderUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => OrderItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderItemWhereUniqueInput, {
+    nullable: true,
+  })
+  orderItem?: OrderItemWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => PaymentWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => PaymentWhereUniqueInput)
+  @IsOptional()
+  @Field(() => PaymentWhereUniqueInput, {
+    nullable: true,
+  })
+  payment?: PaymentWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => PaymentUpdateManyWithoutOrdersInput,
+  })
+  @ValidateNested()
+  @Type(() => PaymentUpdateManyWithoutOrdersInput)
+  @IsOptional()
+  @Field(() => PaymentUpdateManyWithoutOrdersInput, {
+    nullable: true,
+  })
+  payments?: PaymentUpdateManyWithoutOrdersInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestWhereUniqueInput)
+  @IsOptional()
+  @Field(() => ReturnRequestWhereUniqueInput, {
+    nullable: true,
+  })
+  returnRequest?: ReturnRequestWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestUpdateManyWithoutOrdersInput,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestUpdateManyWithoutOrdersInput)
+  @IsOptional()
+  @Field(() => ReturnRequestUpdateManyWithoutOrdersInput, {
+    nullable: true,
+  })
+  returnRequests?: ReturnRequestUpdateManyWithoutOrdersInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserUpdateManyWithoutOrdersInput,
+  })
+  @ValidateNested()
+  @Type(() => UserUpdateManyWithoutOrdersInput)
+  @IsOptional()
+  @Field(() => UserUpdateManyWithoutOrdersInput, {
+    nullable: true,
+  })
+  users?: UserUpdateManyWithoutOrdersInput;
+}
+
 export { OrderUpdateInput as OrderUpdateInput };

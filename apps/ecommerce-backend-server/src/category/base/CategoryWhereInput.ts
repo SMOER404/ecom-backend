@@ -61,6 +61,17 @@ class CategoryWhereInput {
   @Field(() => StringNullableFilter, {
     nullable: true,
   })
+  parentCategory?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
   parentCategoryId?: StringNullableFilter;
 
   @ApiProperty({

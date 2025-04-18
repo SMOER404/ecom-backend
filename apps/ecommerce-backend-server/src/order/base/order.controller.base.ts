@@ -22,6 +22,15 @@ import { Order } from "./Order";
 import { OrderFindManyArgs } from "./OrderFindManyArgs";
 import { OrderWhereUniqueInput } from "./OrderWhereUniqueInput";
 import { OrderUpdateInput } from "./OrderUpdateInput";
+import { PaymentFindManyArgs } from "../../payment/base/PaymentFindManyArgs";
+import { Payment } from "../../payment/base/Payment";
+import { PaymentWhereUniqueInput } from "../../payment/base/PaymentWhereUniqueInput";
+import { ReturnRequestFindManyArgs } from "../../returnRequest/base/ReturnRequestFindManyArgs";
+import { ReturnRequest } from "../../returnRequest/base/ReturnRequest";
+import { ReturnRequestWhereUniqueInput } from "../../returnRequest/base/ReturnRequestWhereUniqueInput";
+import { UserFindManyArgs } from "../../user/base/UserFindManyArgs";
+import { User } from "../../user/base/User";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
 
 export class OrderControllerBase {
   constructor(protected readonly service: OrderService) {}
@@ -29,10 +38,49 @@ export class OrderControllerBase {
   @swagger.ApiCreatedResponse({ type: Order })
   async createOrder(@common.Body() data: OrderCreateInput): Promise<Order> {
     return await this.service.createOrder({
-      data: data,
+      data: {
+        ...data,
+
+        orderItem: data.orderItem
+          ? {
+              connect: data.orderItem,
+            }
+          : undefined,
+
+        payment: data.payment
+          ? {
+              connect: data.payment,
+            }
+          : undefined,
+
+        returnRequest: data.returnRequest
+          ? {
+              connect: data.returnRequest,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        payment: {
+          select: {
+            id: true,
+          },
+        },
+
+        returnRequest: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -48,6 +96,25 @@ export class OrderControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        payment: {
+          select: {
+            id: true,
+          },
+        },
+
+        returnRequest: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -64,6 +131,25 @@ export class OrderControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        payment: {
+          select: {
+            id: true,
+          },
+        },
+
+        returnRequest: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -85,10 +171,49 @@ export class OrderControllerBase {
     try {
       return await this.service.updateOrder({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          orderItem: data.orderItem
+            ? {
+                connect: data.orderItem,
+              }
+            : undefined,
+
+          payment: data.payment
+            ? {
+                connect: data.payment,
+              }
+            : undefined,
+
+          returnRequest: data.returnRequest
+            ? {
+                connect: data.returnRequest,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
+
+          orderItem: {
+            select: {
+              id: true,
+            },
+          },
+
+          payment: {
+            select: {
+              id: true,
+            },
+          },
+
+          returnRequest: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -114,6 +239,25 @@ export class OrderControllerBase {
         select: {
           createdAt: true,
           id: true,
+
+          orderItem: {
+            select: {
+              id: true,
+            },
+          },
+
+          payment: {
+            select: {
+              id: true,
+            },
+          },
+
+          returnRequest: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -125,5 +269,280 @@ export class OrderControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/payments")
+  @ApiNestedQuery(PaymentFindManyArgs)
+  async findPayments(
+    @common.Req() request: Request,
+    @common.Param() params: OrderWhereUniqueInput
+  ): Promise<Payment[]> {
+    const query = plainToClass(PaymentFindManyArgs, request.query);
+    const results = await this.service.findPayments(params.id, {
+      ...query,
+      select: {
+        amount: true,
+        createdAt: true,
+        id: true,
+        method: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
+        status: true,
+        transactionId: true,
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/payments")
+  async connectPayments(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: PaymentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      payments: {
+        connect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/payments")
+  async updatePayments(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: PaymentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      payments: {
+        set: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/payments")
+  async disconnectPayments(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: PaymentWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      payments: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/returnRequests")
+  @ApiNestedQuery(ReturnRequestFindManyArgs)
+  async findReturnRequests(
+    @common.Req() request: Request,
+    @common.Param() params: OrderWhereUniqueInput
+  ): Promise<ReturnRequest[]> {
+    const query = plainToClass(ReturnRequestFindManyArgs, request.query);
+    const results = await this.service.findReturnRequests(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
+        reason: true,
+        status: true,
+        updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/returnRequests")
+  async connectReturnRequests(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: ReturnRequestWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      returnRequests: {
+        connect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/returnRequests")
+  async updateReturnRequests(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: ReturnRequestWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      returnRequests: {
+        set: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/returnRequests")
+  async disconnectReturnRequests(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: ReturnRequestWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      returnRequests: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/users")
+  @ApiNestedQuery(UserFindManyArgs)
+  async findUsers(
+    @common.Req() request: Request,
+    @common.Param() params: OrderWhereUniqueInput
+  ): Promise<User[]> {
+    const query = plainToClass(UserFindManyArgs, request.query);
+    const results = await this.service.findUsers(params.id, {
+      ...query,
+      select: {
+        cart: {
+          select: {
+            id: true,
+          },
+        },
+
+        createdAt: true,
+        email: true,
+        firstName: true,
+        googleId: true,
+        id: true,
+        lastName: true,
+        name: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
+        role: true,
+        roles: true,
+        updatedAt: true,
+        username: true,
+
+        wishlist: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/users")
+  async connectUsers(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        connect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/users")
+  async updateUsers(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        set: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/users")
+  async disconnectUsers(
+    @common.Param() params: OrderWhereUniqueInput,
+    @common.Body() body: UserWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      users: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateOrder({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

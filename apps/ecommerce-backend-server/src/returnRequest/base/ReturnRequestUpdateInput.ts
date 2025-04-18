@@ -11,11 +11,45 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength, IsOptional, IsEnum } from "class-validator";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { OrderUpdateManyWithoutReturnRequestsInput } from "./OrderUpdateManyWithoutReturnRequestsInput";
 import { EnumReturnRequestStatus } from "./EnumReturnRequestStatus";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
 
 @InputType()
 class ReturnRequestUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderUpdateManyWithoutReturnRequestsInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderUpdateManyWithoutReturnRequestsInput)
+  @IsOptional()
+  @Field(() => OrderUpdateManyWithoutReturnRequestsInput, {
+    nullable: true,
+  })
+  orders?: OrderUpdateManyWithoutReturnRequestsInput;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -38,6 +72,18 @@ class ReturnRequestUpdateInput {
     nullable: true,
   })
   status?: "Option1" | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
 }
 
 export { ReturnRequestUpdateInput as ReturnRequestUpdateInput };

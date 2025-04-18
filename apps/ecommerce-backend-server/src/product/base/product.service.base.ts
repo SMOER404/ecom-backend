@@ -15,8 +15,11 @@ import {
   Prisma,
   Product as PrismaProduct,
   Review as PrismaReview,
+  Wishlist as PrismaWishlist,
   Brand as PrismaBrand,
+  CartItem as PrismaCartItem,
   Category as PrismaCategory,
+  OrderItem as PrismaOrderItem,
 } from "@prisma/client";
 
 export class ProductServiceBase {
@@ -55,6 +58,17 @@ export class ProductServiceBase {
       .reviews(args);
   }
 
+  async findWishlists(
+    parentId: string,
+    args: Prisma.WishlistFindManyArgs
+  ): Promise<PrismaWishlist[]> {
+    return this.prisma.product
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .wishlists(args);
+  }
+
   async getBrand(parentId: string): Promise<PrismaBrand | null> {
     return this.prisma.product
       .findUnique({
@@ -63,11 +77,27 @@ export class ProductServiceBase {
       .brand();
   }
 
+  async getCartItem(parentId: string): Promise<PrismaCartItem | null> {
+    return this.prisma.product
+      .findUnique({
+        where: { id: parentId },
+      })
+      .cartItem();
+  }
+
   async getCategory(parentId: string): Promise<PrismaCategory | null> {
     return this.prisma.product
       .findUnique({
         where: { id: parentId },
       })
       .category();
+  }
+
+  async getOrderItem(parentId: string): Promise<PrismaOrderItem | null> {
+    return this.prisma.product
+      .findUnique({
+        where: { id: parentId },
+      })
+      .orderItem();
   }
 }

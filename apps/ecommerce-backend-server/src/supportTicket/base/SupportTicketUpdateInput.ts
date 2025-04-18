@@ -11,8 +11,16 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength, IsOptional, IsEnum } from "class-validator";
+import {
+  IsString,
+  MaxLength,
+  IsOptional,
+  IsEnum,
+  ValidateNested,
+} from "class-validator";
 import { EnumSupportTicketStatus } from "./EnumSupportTicketStatus";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
+import { Type } from "class-transformer";
 
 @InputType()
 class SupportTicketUpdateInput {
@@ -50,6 +58,18 @@ class SupportTicketUpdateInput {
     nullable: true,
   })
   topic?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
 }
 
 export { SupportTicketUpdateInput as SupportTicketUpdateInput };

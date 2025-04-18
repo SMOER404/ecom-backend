@@ -11,12 +11,25 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { UserCreateNestedManyWithoutCartsInput } from "./UserCreateNestedManyWithoutCartsInput";
+import { CartItemCreateNestedManyWithoutCartsInput } from "./CartItemCreateNestedManyWithoutCartsInput";
 import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
+import { UserCreateNestedManyWithoutCartsInput } from "./UserCreateNestedManyWithoutCartsInput";
 
 @InputType()
 class CartCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => CartItemCreateNestedManyWithoutCartsInput,
+  })
+  @ValidateNested()
+  @Type(() => CartItemCreateNestedManyWithoutCartsInput)
+  @IsOptional()
+  @Field(() => CartItemCreateNestedManyWithoutCartsInput, {
+    nullable: true,
+  })
+  cartItems?: CartItemCreateNestedManyWithoutCartsInput;
+
   @ApiProperty({
     required: false,
     type: () => UserCreateNestedManyWithoutCartsInput,

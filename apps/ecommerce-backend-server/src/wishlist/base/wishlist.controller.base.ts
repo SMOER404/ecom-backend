@@ -34,10 +34,25 @@ export class WishlistControllerBase {
     @common.Body() data: WishlistCreateInput
   ): Promise<Wishlist> {
     return await this.service.createWishlist({
-      data: data,
+      data: {
+        ...data,
+
+        product: data.product
+          ? {
+              connect: data.product,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
+
+        product: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -53,6 +68,13 @@ export class WishlistControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        product: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -69,6 +91,13 @@ export class WishlistControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        product: {
+          select: {
+            id: true,
+          },
+        },
+
         updatedAt: true,
       },
     });
@@ -90,10 +119,25 @@ export class WishlistControllerBase {
     try {
       return await this.service.updateWishlist({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          product: data.product
+            ? {
+                connect: data.product,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
+
+          product: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -119,6 +163,13 @@ export class WishlistControllerBase {
         select: {
           createdAt: true,
           id: true,
+
+          product: {
+            select: {
+              id: true,
+            },
+          },
+
           updatedAt: true,
         },
       });
@@ -155,6 +206,13 @@ export class WishlistControllerBase {
         id: true,
         lastName: true,
         name: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         role: true,
         roles: true,
         updatedAt: true,

@@ -22,6 +22,9 @@ import { ReturnRequest } from "./ReturnRequest";
 import { ReturnRequestFindManyArgs } from "./ReturnRequestFindManyArgs";
 import { ReturnRequestWhereUniqueInput } from "./ReturnRequestWhereUniqueInput";
 import { ReturnRequestUpdateInput } from "./ReturnRequestUpdateInput";
+import { OrderFindManyArgs } from "../../order/base/OrderFindManyArgs";
+import { Order } from "../../order/base/Order";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
 
 export class ReturnRequestControllerBase {
   constructor(protected readonly service: ReturnRequestService) {}
@@ -31,13 +34,40 @@ export class ReturnRequestControllerBase {
     @common.Body() data: ReturnRequestCreateInput
   ): Promise<ReturnRequest> {
     return await this.service.createReturnRequest({
-      data: data,
+      data: {
+        ...data,
+
+        order: data.order
+          ? {
+              connect: data.order,
+            }
+          : undefined,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         reason: true,
         status: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -54,9 +84,22 @@ export class ReturnRequestControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         reason: true,
         status: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -72,9 +115,22 @@ export class ReturnRequestControllerBase {
       select: {
         createdAt: true,
         id: true,
+
+        order: {
+          select: {
+            id: true,
+          },
+        },
+
         reason: true,
         status: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -95,13 +151,40 @@ export class ReturnRequestControllerBase {
     try {
       return await this.service.updateReturnRequest({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          order: data.order
+            ? {
+                connect: data.order,
+              }
+            : undefined,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
+
+          order: {
+            select: {
+              id: true,
+            },
+          },
+
           reason: true,
           status: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -126,9 +209,22 @@ export class ReturnRequestControllerBase {
         select: {
           createdAt: true,
           id: true,
+
+          order: {
+            select: {
+              id: true,
+            },
+          },
+
           reason: true,
           status: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -139,5 +235,98 @@ export class ReturnRequestControllerBase {
       }
       throw error;
     }
+  }
+
+  @common.Get("/:id/orders")
+  @ApiNestedQuery(OrderFindManyArgs)
+  async findOrders(
+    @common.Req() request: Request,
+    @common.Param() params: ReturnRequestWhereUniqueInput
+  ): Promise<Order[]> {
+    const query = plainToClass(OrderFindManyArgs, request.query);
+    const results = await this.service.findOrders(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
+        payment: {
+          select: {
+            id: true,
+          },
+        },
+
+        returnRequest: {
+          select: {
+            id: true,
+          },
+        },
+
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/orders")
+  async connectOrders(
+    @common.Param() params: ReturnRequestWhereUniqueInput,
+    @common.Body() body: OrderWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      orders: {
+        connect: body,
+      },
+    };
+    await this.service.updateReturnRequest({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/orders")
+  async updateOrders(
+    @common.Param() params: ReturnRequestWhereUniqueInput,
+    @common.Body() body: OrderWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      orders: {
+        set: body,
+      },
+    };
+    await this.service.updateReturnRequest({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/orders")
+  async disconnectOrders(
+    @common.Param() params: ReturnRequestWhereUniqueInput,
+    @common.Body() body: OrderWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      orders: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateReturnRequest({
+      where: params,
+      data,
+      select: { id: true },
+    });
   }
 }

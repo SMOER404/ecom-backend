@@ -10,7 +10,13 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, ReturnRequest as PrismaReturnRequest } from "@prisma/client";
+
+import {
+  Prisma,
+  ReturnRequest as PrismaReturnRequest,
+  Order as PrismaOrder,
+  User as PrismaUser,
+} from "@prisma/client";
 
 export class ReturnRequestServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -45,5 +51,32 @@ export class ReturnRequestServiceBase {
     args: Prisma.ReturnRequestDeleteArgs
   ): Promise<PrismaReturnRequest> {
     return this.prisma.returnRequest.delete(args);
+  }
+
+  async findOrders(
+    parentId: string,
+    args: Prisma.OrderFindManyArgs
+  ): Promise<PrismaOrder[]> {
+    return this.prisma.returnRequest
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .orders(args);
+  }
+
+  async getOrder(parentId: string): Promise<PrismaOrder | null> {
+    return this.prisma.returnRequest
+      .findUnique({
+        where: { id: parentId },
+      })
+      .order();
+  }
+
+  async getUser(parentId: string): Promise<PrismaUser | null> {
+    return this.prisma.returnRequest
+      .findUnique({
+        where: { id: parentId },
+      })
+      .user();
   }
 }

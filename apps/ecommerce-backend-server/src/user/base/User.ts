@@ -11,7 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Cart } from "../../cart/base/Cart";
+import { AuditLog } from "../../auditLog/base/AuditLog";
 import {
   ValidateNested,
   IsOptional,
@@ -21,15 +21,29 @@ import {
   IsEnum,
 } from "class-validator";
 import { Type } from "class-transformer";
+import { Cart } from "../../cart/base/Cart";
+import { Notification } from "../../notification/base/Notification";
+import { Order } from "../../order/base/Order";
+import { ReturnRequest } from "../../returnRequest/base/ReturnRequest";
 import { Review } from "../../review/base/Review";
 import { EnumUserRole } from "./EnumUserRole";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
+import { SupportTicket } from "../../supportTicket/base/SupportTicket";
 import { Wishlist } from "../../wishlist/base/Wishlist";
 
 @ObjectType()
 class User {
+  @ApiProperty({
+    required: false,
+    type: () => [AuditLog],
+  })
+  @ValidateNested()
+  @Type(() => AuditLog)
+  @IsOptional()
+  auditLogs?: Array<AuditLog>;
+
   @ApiProperty({
     required: false,
     type: () => Cart,
@@ -116,6 +130,33 @@ class User {
 
   @ApiProperty({
     required: false,
+    type: () => [Notification],
+  })
+  @ValidateNested()
+  @Type(() => Notification)
+  @IsOptional()
+  notifications?: Array<Notification>;
+
+  @ApiProperty({
+    required: false,
+    type: () => Order,
+  })
+  @ValidateNested()
+  @Type(() => Order)
+  @IsOptional()
+  order?: Order | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [ReturnRequest],
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequest)
+  @IsOptional()
+  returnRequests?: Array<ReturnRequest>;
+
+  @ApiProperty({
+    required: false,
     type: () => [Review],
   })
   @ValidateNested()
@@ -140,6 +181,15 @@ class User {
   @IsJSONValue()
   @Field(() => GraphQLJSON)
   roles!: JsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => [SupportTicket],
+  })
+  @ValidateNested()
+  @Type(() => SupportTicket)
+  @IsOptional()
+  supportTickets?: Array<SupportTicket>;
 
   @ApiProperty({
     required: true,

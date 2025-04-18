@@ -161,6 +161,12 @@ export class BrandControllerBase {
           },
         },
 
+        cartItem: {
+          select: {
+            id: true,
+          },
+        },
+
         category: {
           select: {
             id: true,
@@ -173,6 +179,13 @@ export class BrandControllerBase {
         id: true,
         images: true,
         inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
         price: true,
         sizes: true,
         title: true,

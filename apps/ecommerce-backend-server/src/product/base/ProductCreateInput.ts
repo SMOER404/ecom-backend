@@ -26,11 +26,14 @@ import {
 } from "class-validator";
 
 import { Type } from "class-transformer";
+import { CartItemWhereUniqueInput } from "../../cartItem/base/CartItemWhereUniqueInput";
 import { CategoryWhereUniqueInput } from "../../category/base/CategoryWhereUniqueInput";
 import { EnumProductColors } from "./EnumProductColors";
 import { EnumProductImages } from "./EnumProductImages";
+import { OrderItemWhereUniqueInput } from "../../orderItem/base/OrderItemWhereUniqueInput";
 import { ReviewCreateNestedManyWithoutProductsInput } from "./ReviewCreateNestedManyWithoutProductsInput";
 import { EnumProductSizes } from "./EnumProductSizes";
+import { WishlistCreateNestedManyWithoutProductsInput } from "./WishlistCreateNestedManyWithoutProductsInput";
 
 @InputType()
 class ProductCreateInput {
@@ -45,6 +48,18 @@ class ProductCreateInput {
     nullable: true,
   })
   brand?: BrandWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => CartItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CartItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CartItemWhereUniqueInput, {
+    nullable: true,
+  })
+  cartItem?: CartItemWhereUniqueInput | null;
 
   @ApiProperty({
     required: false,
@@ -111,6 +126,18 @@ class ProductCreateInput {
 
   @ApiProperty({
     required: false,
+    type: () => OrderItemWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderItemWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderItemWhereUniqueInput, {
+    nullable: true,
+  })
+  orderItem?: OrderItemWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
     type: Number,
   })
   @IsNumber()
@@ -159,6 +186,18 @@ class ProductCreateInput {
     nullable: true,
   })
   title?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => WishlistCreateNestedManyWithoutProductsInput,
+  })
+  @ValidateNested()
+  @Type(() => WishlistCreateNestedManyWithoutProductsInput)
+  @IsOptional()
+  @Field(() => WishlistCreateNestedManyWithoutProductsInput, {
+    nullable: true,
+  })
+  wishlists?: WishlistCreateNestedManyWithoutProductsInput;
 }
 
 export { ProductCreateInput as ProductCreateInput };

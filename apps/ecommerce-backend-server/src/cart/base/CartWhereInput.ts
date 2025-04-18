@@ -11,13 +11,26 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringFilter } from "../../util/StringFilter";
+import { CartItemListRelationFilter } from "../../cartItem/base/CartItemListRelationFilter";
+import { ValidateNested, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
-import { IsOptional, ValidateNested } from "class-validator";
+import { StringFilter } from "../../util/StringFilter";
 import { UserListRelationFilter } from "../../user/base/UserListRelationFilter";
 
 @InputType()
 class CartWhereInput {
+  @ApiProperty({
+    required: false,
+    type: () => CartItemListRelationFilter,
+  })
+  @ValidateNested()
+  @Type(() => CartItemListRelationFilter)
+  @IsOptional()
+  @Field(() => CartItemListRelationFilter, {
+    nullable: true,
+  })
+  cartItems?: CartItemListRelationFilter;
+
   @ApiProperty({
     required: false,
     type: StringFilter,

@@ -25,6 +25,9 @@ import { ProductUpdateInput } from "./ProductUpdateInput";
 import { ReviewFindManyArgs } from "../../review/base/ReviewFindManyArgs";
 import { Review } from "../../review/base/Review";
 import { ReviewWhereUniqueInput } from "../../review/base/ReviewWhereUniqueInput";
+import { WishlistFindManyArgs } from "../../wishlist/base/WishlistFindManyArgs";
+import { Wishlist } from "../../wishlist/base/Wishlist";
+import { WishlistWhereUniqueInput } from "../../wishlist/base/WishlistWhereUniqueInput";
 
 export class ProductControllerBase {
   constructor(protected readonly service: ProductService) {}
@@ -43,14 +46,32 @@ export class ProductControllerBase {
             }
           : undefined,
 
+        cartItem: data.cartItem
+          ? {
+              connect: data.cartItem,
+            }
+          : undefined,
+
         category: data.category
           ? {
               connect: data.category,
             }
           : undefined,
+
+        orderItem: data.orderItem
+          ? {
+              connect: data.orderItem,
+            }
+          : undefined,
       },
       select: {
         brand: {
+          select: {
+            id: true,
+          },
+        },
+
+        cartItem: {
           select: {
             id: true,
           },
@@ -68,6 +89,13 @@ export class ProductControllerBase {
         id: true,
         images: true,
         inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
         price: true,
         sizes: true,
         title: true,
@@ -90,6 +118,12 @@ export class ProductControllerBase {
           },
         },
 
+        cartItem: {
+          select: {
+            id: true,
+          },
+        },
+
         category: {
           select: {
             id: true,
@@ -102,6 +136,13 @@ export class ProductControllerBase {
         id: true,
         images: true,
         inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
         price: true,
         sizes: true,
         title: true,
@@ -125,6 +166,12 @@ export class ProductControllerBase {
           },
         },
 
+        cartItem: {
+          select: {
+            id: true,
+          },
+        },
+
         category: {
           select: {
             id: true,
@@ -137,6 +184,13 @@ export class ProductControllerBase {
         id: true,
         images: true,
         inStock: true,
+
+        orderItem: {
+          select: {
+            id: true,
+          },
+        },
+
         price: true,
         sizes: true,
         title: true,
@@ -170,14 +224,32 @@ export class ProductControllerBase {
               }
             : undefined,
 
+          cartItem: data.cartItem
+            ? {
+                connect: data.cartItem,
+              }
+            : undefined,
+
           category: data.category
             ? {
                 connect: data.category,
               }
             : undefined,
+
+          orderItem: data.orderItem
+            ? {
+                connect: data.orderItem,
+              }
+            : undefined,
         },
         select: {
           brand: {
+            select: {
+              id: true,
+            },
+          },
+
+          cartItem: {
             select: {
               id: true,
             },
@@ -195,6 +267,13 @@ export class ProductControllerBase {
           id: true,
           images: true,
           inStock: true,
+
+          orderItem: {
+            select: {
+              id: true,
+            },
+          },
+
           price: true,
           sizes: true,
           title: true,
@@ -227,6 +306,12 @@ export class ProductControllerBase {
             },
           },
 
+          cartItem: {
+            select: {
+              id: true,
+            },
+          },
+
           category: {
             select: {
               id: true,
@@ -239,6 +324,13 @@ export class ProductControllerBase {
           id: true,
           images: true,
           inStock: true,
+
+          orderItem: {
+            select: {
+              id: true,
+            },
+          },
+
           price: true,
           sizes: true,
           title: true,
@@ -334,6 +426,87 @@ export class ProductControllerBase {
   ): Promise<void> {
     const data = {
       reviews: {
+        disconnect: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Get("/:id/wishlists")
+  @ApiNestedQuery(WishlistFindManyArgs)
+  async findWishlists(
+    @common.Req() request: Request,
+    @common.Param() params: ProductWhereUniqueInput
+  ): Promise<Wishlist[]> {
+    const query = plainToClass(WishlistFindManyArgs, request.query);
+    const results = await this.service.findWishlists(params.id, {
+      ...query,
+      select: {
+        createdAt: true,
+        id: true,
+
+        product: {
+          select: {
+            id: true,
+          },
+        },
+
+        updatedAt: true,
+      },
+    });
+    if (results === null) {
+      throw new errors.NotFoundException(
+        `No resource was found for ${JSON.stringify(params)}`
+      );
+    }
+    return results;
+  }
+
+  @common.Post("/:id/wishlists")
+  async connectWishlists(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: WishlistWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      wishlists: {
+        connect: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Patch("/:id/wishlists")
+  async updateWishlists(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: WishlistWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      wishlists: {
+        set: body,
+      },
+    };
+    await this.service.updateProduct({
+      where: params,
+      data,
+      select: { id: true },
+    });
+  }
+
+  @common.Delete("/:id/wishlists")
+  async disconnectWishlists(
+    @common.Param() params: ProductWhereUniqueInput,
+    @common.Body() body: WishlistWhereUniqueInput[]
+  ): Promise<void> {
+    const data = {
+      wishlists: {
         disconnect: body,
       },
     };

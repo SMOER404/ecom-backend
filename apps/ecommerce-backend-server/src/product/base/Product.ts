@@ -27,11 +27,14 @@ import {
 } from "class-validator";
 
 import { Type } from "class-transformer";
+import { CartItem } from "../../cartItem/base/CartItem";
 import { Category } from "../../category/base/Category";
 import { EnumProductColors } from "./EnumProductColors";
 import { EnumProductImages } from "./EnumProductImages";
+import { OrderItem } from "../../orderItem/base/OrderItem";
 import { Review } from "../../review/base/Review";
 import { EnumProductSizes } from "./EnumProductSizes";
+import { Wishlist } from "../../wishlist/base/Wishlist";
 
 @ObjectType()
 class Product {
@@ -43,6 +46,15 @@ class Product {
   @Type(() => Brand)
   @IsOptional()
   brand?: Brand | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => CartItem,
+  })
+  @ValidateNested()
+  @Type(() => CartItem)
+  @IsOptional()
+  cartItem?: CartItem | null;
 
   @ApiProperty({
     required: false,
@@ -122,6 +134,15 @@ class Product {
 
   @ApiProperty({
     required: false,
+    type: () => OrderItem,
+  })
+  @ValidateNested()
+  @Type(() => OrderItem)
+  @IsOptional()
+  orderItem?: OrderItem | null;
+
+  @ApiProperty({
+    required: false,
     type: Number,
   })
   @IsNumber()
@@ -175,6 +196,15 @@ class Product {
   @Type(() => Date)
   @Field(() => Date)
   updatedAt!: Date;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Wishlist],
+  })
+  @ValidateNested()
+  @Type(() => Wishlist)
+  @IsOptional()
+  wishlists?: Array<Wishlist>;
 }
 
 export { Product as Product };

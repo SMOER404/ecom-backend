@@ -10,10 +10,12 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
+
 import {
   Prisma,
   Wishlist as PrismaWishlist,
   User as PrismaUser,
+  Product as PrismaProduct,
 } from "@prisma/client";
 
 export class WishlistServiceBase {
@@ -58,5 +60,13 @@ export class WishlistServiceBase {
         where: { id: parentId },
       })
       .users(args);
+  }
+
+  async getProduct(parentId: string): Promise<PrismaProduct | null> {
+    return this.prisma.wishlist
+      .findUnique({
+        where: { id: parentId },
+      })
+      .product();
   }
 }

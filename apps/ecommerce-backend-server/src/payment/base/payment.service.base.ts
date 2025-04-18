@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, Payment as PrismaPayment } from "@prisma/client";
+import {
+  Prisma,
+  Payment as PrismaPayment,
+  Order as PrismaOrder,
+} from "@prisma/client";
 
 export class PaymentServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -35,5 +39,24 @@ export class PaymentServiceBase {
   }
   async deletePayment(args: Prisma.PaymentDeleteArgs): Promise<PrismaPayment> {
     return this.prisma.payment.delete(args);
+  }
+
+  async findOrders(
+    parentId: string,
+    args: Prisma.OrderFindManyArgs
+  ): Promise<PrismaOrder[]> {
+    return this.prisma.payment
+      .findUniqueOrThrow({
+        where: { id: parentId },
+      })
+      .orders(args);
+  }
+
+  async getOrder(parentId: string): Promise<PrismaOrder | null> {
+    return this.prisma.payment
+      .findUnique({
+        where: { id: parentId },
+      })
+      .order();
   }
 }

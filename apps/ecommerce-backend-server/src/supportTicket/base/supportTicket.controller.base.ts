@@ -31,7 +31,15 @@ export class SupportTicketControllerBase {
     @common.Body() data: SupportTicketCreateInput
   ): Promise<SupportTicket> {
     return await this.service.createSupportTicket({
-      data: data,
+      data: {
+        ...data,
+
+        user: data.user
+          ? {
+              connect: data.user,
+            }
+          : undefined,
+      },
       select: {
         createdAt: true,
         id: true,
@@ -39,6 +47,12 @@ export class SupportTicketControllerBase {
         status: true,
         topic: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -59,6 +73,12 @@ export class SupportTicketControllerBase {
         status: true,
         topic: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
   }
@@ -78,6 +98,12 @@ export class SupportTicketControllerBase {
         status: true,
         topic: true,
         updatedAt: true,
+
+        user: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
     if (result === null) {
@@ -98,7 +124,15 @@ export class SupportTicketControllerBase {
     try {
       return await this.service.updateSupportTicket({
         where: params,
-        data: data,
+        data: {
+          ...data,
+
+          user: data.user
+            ? {
+                connect: data.user,
+              }
+            : undefined,
+        },
         select: {
           createdAt: true,
           id: true,
@@ -106,6 +140,12 @@ export class SupportTicketControllerBase {
           status: true,
           topic: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {
@@ -134,6 +174,12 @@ export class SupportTicketControllerBase {
           status: true,
           topic: true,
           updatedAt: true,
+
+          user: {
+            select: {
+              id: true,
+            },
+          },
         },
       });
     } catch (error) {

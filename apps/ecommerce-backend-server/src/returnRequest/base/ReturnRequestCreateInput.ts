@@ -11,11 +11,45 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString, MaxLength, IsOptional, IsEnum } from "class-validator";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import {
+  ValidateNested,
+  IsOptional,
+  IsString,
+  MaxLength,
+  IsEnum,
+} from "class-validator";
+import { Type } from "class-transformer";
+import { OrderCreateNestedManyWithoutReturnRequestsInput } from "./OrderCreateNestedManyWithoutReturnRequestsInput";
 import { EnumReturnRequestStatus } from "./EnumReturnRequestStatus";
+import { UserWhereUniqueInput } from "../../user/base/UserWhereUniqueInput";
 
 @InputType()
 class ReturnRequestCreateInput {
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderCreateNestedManyWithoutReturnRequestsInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderCreateNestedManyWithoutReturnRequestsInput)
+  @IsOptional()
+  @Field(() => OrderCreateNestedManyWithoutReturnRequestsInput, {
+    nullable: true,
+  })
+  orders?: OrderCreateNestedManyWithoutReturnRequestsInput;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -38,6 +72,18 @@ class ReturnRequestCreateInput {
     nullable: true,
   })
   status?: "Option1" | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => UserWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => UserWhereUniqueInput)
+  @IsOptional()
+  @Field(() => UserWhereUniqueInput, {
+    nullable: true,
+  })
+  user?: UserWhereUniqueInput | null;
 }
 
 export { ReturnRequestCreateInput as ReturnRequestCreateInput };

@@ -11,7 +11,7 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
+import { AuditLogUpdateManyWithoutUsersInput } from "./AuditLogUpdateManyWithoutUsersInput";
 import {
   ValidateNested,
   IsOptional,
@@ -20,15 +20,32 @@ import {
   IsEnum,
 } from "class-validator";
 import { Type } from "class-transformer";
+import { CartWhereUniqueInput } from "../../cart/base/CartWhereUniqueInput";
+import { NotificationUpdateManyWithoutUsersInput } from "./NotificationUpdateManyWithoutUsersInput";
+import { OrderWhereUniqueInput } from "../../order/base/OrderWhereUniqueInput";
+import { ReturnRequestUpdateManyWithoutUsersInput } from "./ReturnRequestUpdateManyWithoutUsersInput";
 import { ReviewUpdateManyWithoutUsersInput } from "./ReviewUpdateManyWithoutUsersInput";
 import { EnumUserRole } from "./EnumUserRole";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { SupportTicketUpdateManyWithoutUsersInput } from "./SupportTicketUpdateManyWithoutUsersInput";
 import { WishlistWhereUniqueInput } from "../../wishlist/base/WishlistWhereUniqueInput";
 
 @InputType()
 class UserUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: () => AuditLogUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => AuditLogUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => AuditLogUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  auditLogs?: AuditLogUpdateManyWithoutUsersInput;
+
   @ApiProperty({
     required: false,
     type: () => CartWhereUniqueInput,
@@ -102,6 +119,30 @@ class UserUpdateInput {
 
   @ApiProperty({
     required: false,
+    type: () => NotificationUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => NotificationUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => NotificationUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  notifications?: NotificationUpdateManyWithoutUsersInput;
+
+  @ApiProperty({
+    required: false,
+    type: () => OrderWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => OrderWhereUniqueInput)
+  @IsOptional()
+  @Field(() => OrderWhereUniqueInput, {
+    nullable: true,
+  })
+  order?: OrderWhereUniqueInput | null;
+
+  @ApiProperty({
+    required: false,
     type: String,
   })
   @IsString()
@@ -110,6 +151,18 @@ class UserUpdateInput {
     nullable: true,
   })
   password?: string;
+
+  @ApiProperty({
+    required: false,
+    type: () => ReturnRequestUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => ReturnRequestUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => ReturnRequestUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  returnRequests?: ReturnRequestUpdateManyWithoutUsersInput;
 
   @ApiProperty({
     required: false,
@@ -143,6 +196,18 @@ class UserUpdateInput {
     nullable: true,
   })
   roles?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
+    type: () => SupportTicketUpdateManyWithoutUsersInput,
+  })
+  @ValidateNested()
+  @Type(() => SupportTicketUpdateManyWithoutUsersInput)
+  @IsOptional()
+  @Field(() => SupportTicketUpdateManyWithoutUsersInput, {
+    nullable: true,
+  })
+  supportTickets?: SupportTicketUpdateManyWithoutUsersInput;
 
   @ApiProperty({
     required: false,

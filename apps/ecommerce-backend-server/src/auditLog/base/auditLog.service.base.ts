@@ -10,7 +10,11 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-import { Prisma, AuditLog as PrismaAuditLog } from "@prisma/client";
+import {
+  Prisma,
+  AuditLog as PrismaAuditLog,
+  User as PrismaUser,
+} from "@prisma/client";
 
 export class AuditLogServiceBase {
   constructor(protected readonly prisma: PrismaService) {}
@@ -43,5 +47,13 @@ export class AuditLogServiceBase {
     args: Prisma.AuditLogDeleteArgs
   ): Promise<PrismaAuditLog> {
     return this.prisma.auditLog.delete(args);
+  }
+
+  async getUser(parentId: string): Promise<PrismaUser | null> {
+    return this.prisma.auditLog
+      .findUnique({
+        where: { id: parentId },
+      })
+      .user();
   }
 }
