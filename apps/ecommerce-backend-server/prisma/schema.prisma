@@ -1,0 +1,229 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Review {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  rating    Int?
+  text      String?
+  updatedAt DateTime @updatedAt
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+}
+
+model CartItem {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model OrderItem {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model Payment {
+  amount        Float?
+  createdAt     DateTime           @default(now())
+  id            String             @id @default(cuid())
+  method        String?
+  status        EnumPaymentStatus?
+  transactionId String?
+  updatedAt     DateTime           @updatedAt
+}
+
+model AuditLog {
+  action    String?
+  createdAt DateTime @default(now())
+  entity    String?
+  entityId  String?
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model ShippingMethod {
+  createdAt             DateTime @default(now())
+  estimatedDeliveryDays Int?
+  id                    String   @id @default(cuid())
+  isActive              Boolean?
+  name                  String?
+  price                 Float?
+  updatedAt             DateTime @updatedAt
+}
+
+model Notification {
+  body      String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  isRead    Boolean?
+  title     String?
+  updatedAt DateTime @updatedAt
+}
+
+model SupportTicket {
+  createdAt DateTime                 @default(now())
+  id        String                   @id @default(cuid())
+  messages  String?
+  status    EnumSupportTicketStatus?
+  topic     String?
+  updatedAt DateTime                 @updatedAt
+}
+
+model Webhook {
+  createdAt DateTime @default(now())
+  event     String?
+  id        String   @id @default(cuid())
+  secret    String?
+  updatedAt DateTime @updatedAt
+  url       String?
+}
+
+model Coupon {
+  code           String?
+  createdAt      DateTime                @default(now())
+  discountType   EnumCouponDiscountType?
+  expirationDate DateTime?
+  id             String                  @id @default(cuid())
+  isActive       Boolean?
+  minOrderAmount Float?
+  updatedAt      DateTime                @updatedAt
+  value          Float?
+}
+
+model ReturnRequest {
+  createdAt DateTime                 @default(now())
+  id        String                   @id @default(cuid())
+  reason    String?
+  status    EnumReturnRequestStatus?
+  updatedAt DateTime                 @updatedAt
+}
+
+model Wishlist {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+model Order {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+}
+
+model FileUpload {
+  createdAt DateTime @default(now())
+  filename  String?
+  id        String   @id @default(cuid())
+  size      Int?
+  typeField String?
+  updatedAt DateTime @updatedAt
+  url       String?
+}
+
+model Brand {
+  createdAt DateTime  @default(now())
+  id        String    @id @default(cuid())
+  logoUrl   String?
+  name      String?
+  products  Product[]
+  slug      String?
+  updatedAt DateTime  @updatedAt
+}
+
+model Category {
+  createdAt        DateTime  @default(now())
+  id               String    @id @default(cuid())
+  imageUrl         String?
+  name             String?
+  parentCategoryId String?
+  products         Product[]
+  slug             String?
+  updatedAt        DateTime  @updatedAt
+}
+
+model Product {
+  brand       Brand?              @relation(fields: [brandId], references: [id])
+  brandId     String?
+  category    Category?           @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  colors      EnumProductColors[]
+  createdAt   DateTime            @default(now())
+  description String?
+  id          String              @id @default(cuid())
+  images      EnumProductImages[]
+  inStock     Boolean?
+  price       Float?
+  reviews     Review[]
+  sizes       EnumProductSizes[]
+  title       String?
+  updatedAt   DateTime            @updatedAt
+}
+
+model User {
+  cart       Cart?         @relation(fields: [cartId], references: [id])
+  cartId     String?
+  createdAt  DateTime      @default(now())
+  email      String?       @unique
+  firstName  String?
+  googleId   String?
+  id         String        @id @default(cuid())
+  lastName   String?
+  name       String?
+  password   String
+  reviews    Review[]
+  role       EnumUserRole?
+  roles      Json
+  updatedAt  DateTime      @updatedAt
+  username   String        @unique
+  wishlist   Wishlist?     @relation(fields: [wishlistId], references: [id])
+  wishlistId String?
+}
+
+enum EnumPaymentStatus {
+  Option1
+}
+
+enum EnumSupportTicketStatus {
+  Option1
+}
+
+enum EnumCouponDiscountType {
+  Option1
+}
+
+enum EnumReturnRequestStatus {
+  Option1
+}
+
+enum EnumProductColors {
+  Option1
+}
+
+enum EnumProductImages {
+  Option1
+}
+
+enum EnumProductSizes {
+  Option1
+}
+
+enum EnumUserRole {
+  Option1
+}
